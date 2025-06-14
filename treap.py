@@ -114,7 +114,7 @@ def inorder(root):
         inorder(root.right)
 
 
-
+# Визуализация
 def draw_treap(ax, root, highlight=None, found=False):
     ax.clear()
     G = nx.DiGraph()
