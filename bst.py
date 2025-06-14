@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-import time
 
 # Вспомогательная функция для построения графа
 def build_graph(root):
@@ -23,29 +22,35 @@ def build_graph(root):
     return G, pos
 
 # Визуализация каждого шага поиска
-def visualize_search_step(G, pos, current_key, found=False):
+def visualize_search_step(G, pos, visited, current_key=None, found=False):
     plt.clf()
     colors = []
     for node in G.nodes():
-        if node == current_key:
-            colors.append('red' if not found else 'green')
+        if node == current_key and found:
+            colors.append('green')
+        elif node == current_key:
+            colors.append('orange')
+        elif node in visited:
+            colors.append('red')
         else:
             colors.append('lightblue')
     nx.draw(G, pos, with_labels=True, node_color=colors, node_size=1000, arrows=False)
     plt.pause(1)
 
-# Обёртка вокруг твоей search() для визуализации
+# Обёртка вокруг search() для визуализации
 def traced_search(root, key):
     G, pos = build_graph(root)
     plt.ion()
     fig = plt.figure()
+    visited = []
 
     def helper(node):
         if node is None:
             return None
-        visualize_search_step(G, pos, node.key)
+        visited.append(node.key)
+        visualize_search_step(G, pos, visited, node.key)
         if node.key == key:
-            visualize_search_step(G, pos, node.key, found=True)
+            visualize_search_step(G, pos, visited, node.key, found=True)
             return node
         if node.key < key:
             return helper(node.right)
@@ -59,8 +64,7 @@ def traced_search(root, key):
 
 
 
-
-
+# Реализация BST
 class Node:
     def __init__(self, key):
         self.key = key

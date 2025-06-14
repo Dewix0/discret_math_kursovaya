@@ -84,6 +84,15 @@ class AVLTree:
             print(node.value, end=' ')
             self.inorder(node.right)
 
+    # Новый метод поиска с возвратом найденного узла
+    def search(self, root, value):
+        if root is None or root.value == value:
+            return root
+        if value < root.value:
+            return self.search(root.left, value)
+        else:
+            return self.search(root.right, value)
+
 # Визуализация 
 
 def build_graph(root):
@@ -117,7 +126,47 @@ def traced_insert(tree, value):
     tree.insert_value(value)
     draw_tree(tree, highlight=value)
 
-# Тестовый запуск 
+# Новая функция визуализации поиска с подсветкой пройденных узлов
+def traced_search(tree, value):
+    G, pos = build_graph(tree.root)
+    plt.ion()
+    fig = plt.figure()
+    visited = []
+
+    def helper(node):
+        if node is None:
+            return None
+        visited.append(node.value)
+        plt.clf()
+        colors = []
+        for n in G.nodes():
+            if n == value and n == node.value:
+                colors.append('green')  # найденный узел
+            elif n == node.value:
+                colors.append('orange')  # текущий узел
+            elif n in visited:
+                colors.append('red')  # пройденные узлы
+            else:
+                colors.append('lightblue')
+        nx.draw(G, pos, with_labels=True, node_color=colors, node_size=1000)
+        plt.pause(1)
+
+        if node.value == value:
+            return node
+        elif value < node.value:
+            return helper(node.left)
+        else:
+            return helper(node.right)
+
+    print(f"Searching for {value}")
+    result = helper(tree.root)
+    plt.ioff()
+    plt.show()
+    if result:
+        print(f"Value {value} found")
+    else:
+        print(f"Value {value} not found")
+    return result
 
 if __name__ == "__main__":
     plt.ion()  # Включаем интерактивный режим
@@ -129,6 +178,11 @@ if __name__ == "__main__":
 
     print("\nIn-order traversal:")
     tree.inorder(tree.root)
+    print()
+
+    # Визуализация поиска
+    traced_search(tree, 28)
+    traced_search(tree, 39)
 
     plt.ioff()
     plt.show()
