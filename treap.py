@@ -175,12 +175,12 @@ if __name__ == "__main__":
     search_keys = [60, 25]
 
     fig, ax = plt.subplots()
-    plt.ion()  # Включить интерактивный режим
+    plt.ion()  
 
     for key in search_keys:
         print(f"Поиск ключа {key}")
         search_visual(root, key, ax)
         time.sleep(1)
 
-    plt.ioff()  # Выключить интерактивный режим
+    plt.ioff() 
     plt.show()
