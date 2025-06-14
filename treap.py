@@ -115,12 +115,14 @@ def inorder(root):
 
 
 # Визуализация
-def draw_treap(ax, root, highlight=None, found=False):
+def draw_treap(ax, root, highlight=None, found=False, visited=None):
     ax.clear()
     G = nx.DiGraph()
     labels = {}
     pos = {}
     colors = {}
+
+    visited = visited or []
 
     def add_edges(node, x=0, y=0, dx=1.5):
         if not node:
@@ -129,11 +131,14 @@ def draw_treap(ax, root, highlight=None, found=False):
         G.add_node(node_id)
         labels[node_id] = f"{node.key}({node.priority})"
         pos[node_id] = (x, -y)
-        colors[node_id] = (
-            'green' if found and highlight == node else
-            'yellow' if highlight == node else
-            'lightblue'
-        )
+
+        if node in visited:
+            colors[node_id] = 'orange'
+        if highlight == node:
+            colors[node_id] = 'green' if found else 'yellow'
+        if node not in visited and node != highlight:
+            colors[node_id] = 'lightblue'
+
         if node.left:
             G.add_edge(node_id, id(node.left))
             add_edges(node.left, x - dx, y + 1, dx / 1.5)
@@ -145,24 +150,28 @@ def draw_treap(ax, root, highlight=None, found=False):
     node_colors = [colors[n] for n in G.nodes()]
     nx.draw(G, pos, ax=ax, with_labels=True, labels=labels, arrows=True,
             node_size=2000, node_color=node_colors, font_size=10, font_weight='bold')
-    ax.set_title("Визуализация поиска")
+    ax.set_title("Поиск в декартовом дереве")
     ax.axis('off')
     plt.pause(0.8)
 
 def search_visual(root, key, ax):
     current = root
+    visited = []
+
     while current:
-        draw_treap(ax, root, highlight=current, found=False)
+        visited.append(current)
+        draw_treap(ax, root, highlight=current, found=False, visited=visited)
         if current.key == key:
             print(f"Ключ {key} найден.")
-            draw_treap(ax, root, highlight=current, found=True)
+            draw_treap(ax, root, highlight=current, found=True, visited=visited)
             return current
         elif key < current.key:
             current = current.left
         else:
             current = current.right
+
     print(f"Ключ {key} не найден.")
-    draw_treap(ax, root, highlight=None, found=False)
+    draw_treap(ax, root, highlight=None, found=False, visited=visited)
     return None
 
 

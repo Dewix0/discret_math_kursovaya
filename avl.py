@@ -169,7 +169,7 @@ def traced_search(tree, value):
     return result
 
 if __name__ == "__main__":
-    plt.ion()  # Включаем интерактивный режим
+    plt.ion()
     tree = AVLTree()
 
     # Пошаговая вставка с визуализацией
